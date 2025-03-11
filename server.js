@@ -9,6 +9,11 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Log environment variables to verify they are loaded correctly
+console.log('PORT:', process.env.PORT);
+console.log('MONGODB_URL:', process.env.MONGODB_URL);
+console.log('RAZORPAY_SECRET:', process.env.RAZORPAY_SECRET);
+
 // Middleware: parse JSON and capture raw body for webhook verification
 app.use(express.json({
   verify: (req, res, buf) => {
@@ -79,10 +84,6 @@ app.post('/webhook', (req, res) => {
     console.error("Invalid webhook signature.");
     return res.status(400).json({ error: 'Invalid signature' });
   }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
 });
 
 app.listen(PORT, () => {
