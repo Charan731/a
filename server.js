@@ -59,22 +59,30 @@ app.post('/webhook', (req, res) => {
   if (hash === signature) {
     console.log("Webhook verified successfully.");
     const event = req.body.event;
+
     // Check if the payment is captured (successful)
     if (event === 'payment.captured') {
       // Increment the balance by 1
       Balance.findByIdAndUpdate('balance', { $inc: { balance: 1 } }, { upsert: true, new: true }, (err, doc) => {
         if (err) {
           console.error("Error updating balance:", err);
+          return res.status(500).json({ error: 'Error updating balance' });
         } else {
           console.log("Balance updated. New balance:", doc.balance);
+          return res.json({ status: 'success', balance: doc.balance });
         }
       });
+    } else {
+      return res.status(400).json({ error: 'Event not handled' });
     }
-    res.json({ status: 'success' });
   } else {
     console.error("Invalid webhook signature.");
-    res.status(400).json({ error: 'Invalid signature' });
+    return res.status(400).json({ error: 'Invalid signature' });
   }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 app.listen(PORT, () => {
