@@ -78,6 +78,7 @@ app.post('/webhook', (req, res) => {
         }
       });
     } else {
+      console.error("Unhandled event type:", event);
       return res.status(400).json({ error: 'Event not handled' });
     }
   } else {
